@@ -36,18 +36,34 @@ const hourlyData = [
   { heure: "18h", emails: 2 },
 ];
 
+const glassStyle = {
+  background: "rgba(0, 43, 41, 0.80)",
+  border: "1px solid rgba(212, 240, 227, 0.08)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+};
+
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#1B1B2F] text-white px-3 py-2 rounded-lg shadow-xl text-[12px]">
-        <p style={{ fontWeight: 600 }} className="mb-1">{label}</p>
+      <div
+        className="px-3 py-2 rounded-xl text-[12px]"
+        style={{
+          background: "rgba(0, 20, 19, 0.95)",
+          border: "1px solid rgba(212, 240, 227, 0.12)",
+          backdropFilter: "blur(12px)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+          color: "#F0FFF8",
+        }}
+      >
+        <p style={{ fontWeight: 600, marginBottom: 4 }}>{label}</p>
         {payload.map((item: any, index: number) => (
-          <p key={index} className="text-white/80">
+          <p key={index} style={{ color: "rgba(212,240,227,0.70)", marginBottom: 2 }}>
             <span
               className="inline-block w-2 h-2 rounded-full mr-1.5"
               style={{ backgroundColor: item.color }}
             />
-            {item.name}: {item.value}
+            {item.name}: <span style={{ color: "#F0FFF8", fontWeight: 600 }}>{item.value}</span>
           </p>
         ))}
       </div>
@@ -58,71 +74,63 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export function EmailVolumeChart() {
   return (
-    <div className="bg-white rounded-xl p-5 border border-black/5">
+    <div className="rounded-2xl p-5" style={glassStyle}>
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h3 className="text-[15px] text-[#1B1B2F]" style={{ fontWeight: 600 }}>
-            Volume d'emails - Semaine
+          <h3 className="text-[15px]" style={{ fontWeight: 600, color: "#F0FFF8" }}>
+            Volume d'emails — Semaine
           </h3>
-          <p className="text-[12px] text-[#6B7280] mt-0.5">
+          <p className="text-[12px] mt-0.5" style={{ color: "rgba(212,240,227,0.45)" }}>
             Semaine du 3 au 9 mars 2026
           </p>
         </div>
         <div className="flex items-center gap-4 text-[11px]">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-1.5 rounded-full bg-[#449850]" />
-            <span className="text-[#6B7280]">Recus</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-1.5 rounded-full bg-[#10B981]" />
-            <span className="text-[#6B7280]">Traites</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-1.5 rounded-full bg-[#DC2626]" />
-            <span className="text-[#6B7280]">Erreurs</span>
-          </div>
+          {[
+            { color: "#48C970", label: "Reçus" },
+            { color: "#22D3EE", label: "Traités" },
+            { color: "#E30613", label: "Erreurs" },
+          ].map((l) => (
+            <div key={l.label} className="flex items-center gap-1.5">
+              <div className="w-3 h-1.5 rounded-full" style={{ backgroundColor: l.color, boxShadow: `0 0 6px ${l.color}80` }} />
+              <span style={{ color: "rgba(212,240,227,0.50)" }}>{l.label}</span>
+            </div>
+          ))}
         </div>
       </div>
+
       <div className="h-[240px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={weeklyData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+            <defs>
+              <linearGradient id="fillRecus" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#48C970" stopOpacity={0.20} />
+                <stop offset="100%" stopColor="#48C970" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="fillTraites" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#22D3EE" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#22D3EE" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="fillErreurs" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#E30613" stopOpacity={0.12} />
+                <stop offset="100%" stopColor="#E30613" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,240,227,0.04)" />
             <XAxis
               dataKey="jour"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 11, fill: "#9CA3AF" }}
+              tick={{ fontSize: 11, fill: "rgba(212,240,227,0.35)" }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 11, fill: "#9CA3AF" }}
+              tick={{ fontSize: 11, fill: "rgba(212,240,227,0.35)" }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Area
-              type="monotone"
-              dataKey="recus"
-              name="Recus"
-              stroke="#449850"
-              strokeWidth={2}
-              fill="rgba(68,152,80,0.12)"
-            />
-            <Area
-              type="monotone"
-              dataKey="traites"
-              name="Traites"
-              stroke="#10B981"
-              strokeWidth={2}
-              fill="rgba(16,185,129,0.12)"
-            />
-            <Area
-              type="monotone"
-              dataKey="erreurs"
-              name="Erreurs"
-              stroke="#DC2626"
-              strokeWidth={2}
-              fill="rgba(220,38,38,0.08)"
-            />
+            <Area type="monotone" dataKey="recus" name="Reçus" stroke="#48C970" strokeWidth={2} fill="url(#fillRecus)" />
+            <Area type="monotone" dataKey="traites" name="Traités" stroke="#22D3EE" strokeWidth={2} fill="url(#fillTraites)" />
+            <Area type="monotone" dataKey="erreurs" name="Erreurs" stroke="#E30613" strokeWidth={2} fill="url(#fillErreurs)" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -132,40 +140,40 @@ export function EmailVolumeChart() {
 
 export function HourlyDistribution() {
   return (
-    <div className="bg-white rounded-xl p-5 border border-black/5">
+    <div className="rounded-2xl p-5" style={glassStyle}>
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h3 className="text-[15px] text-[#1B1B2F]" style={{ fontWeight: 600 }}>
+          <h3 className="text-[15px]" style={{ fontWeight: 600, color: "#F0FFF8" }}>
             Distribution horaire
           </h3>
-          <p className="text-[12px] text-[#6B7280] mt-0.5">
-            Aujourd'hui, 11 mars 2026
+          <p className="text-[12px] mt-0.5" style={{ color: "rgba(212,240,227,0.45)" }}>
+            Aujourd'hui, 12 mars 2026
           </p>
         </div>
       </div>
       <div className="h-[240px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={hourlyData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+            <defs>
+              <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#48C970" stopOpacity={0.9} />
+                <stop offset="100%" stopColor="#048740" stopOpacity={0.6} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,240,227,0.04)" vertical={false} />
             <XAxis
               dataKey="heure"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 10, fill: "#9CA3AF" }}
+              tick={{ fontSize: 10, fill: "rgba(212,240,227,0.35)" }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 10, fill: "#9CA3AF" }}
+              tick={{ fontSize: 10, fill: "rgba(212,240,227,0.35)" }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Bar
-              dataKey="emails"
-              name="Emails"
-              fill="#449850"
-              radius={[4, 4, 0, 0]}
-              maxBarSize={32}
-            />
+            <Bar dataKey="emails" name="Emails" fill="url(#barGrad)" radius={[4, 4, 0, 0]} maxBarSize={32} />
           </BarChart>
         </ResponsiveContainer>
       </div>

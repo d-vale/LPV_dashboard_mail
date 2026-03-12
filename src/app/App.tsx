@@ -3,8 +3,6 @@ import {
   Search,
   Bell,
   Calendar,
-  ChevronDown,
-  Sun,
   Sparkles,
 } from "lucide-react";
 import { SidebarNav } from "./components/sidebar-nav";
@@ -24,14 +22,22 @@ import { initialEmails } from "./data/mock-emails";
 
 function TopBar({ onNotificationClick, pendingCount }: { onNotificationClick: () => void; pendingCount: number }) {
   return (
-    <header className="h-[64px] bg-white border-b border-black/5 flex items-center justify-between px-6 sticky top-0 z-40">
+    <header
+      className="h-[64px] flex items-center justify-between px-6 sticky top-0 z-40"
+      style={{
+        background: "rgba(0, 26, 25, 0.80)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(212, 240, 227, 0.06)",
+      }}
+    >
       <div className="flex items-center gap-4">
         <div>
-          <h1 className="text-[18px] text-[#1B1B2F]" style={{ fontWeight: 700, lineHeight: 1.2 }}>
+          <h1 className="text-[18px]" style={{ fontWeight: 700, lineHeight: 1.2, color: "#F0FFF8" }}>
             Dashboard de Monitoring
           </h1>
-          <p className="text-[12px] text-[#9CA3AF] flex items-center gap-1.5">
-            <Sparkles size={12} className="text-[#449850]" />
+          <p className="text-[12px] flex items-center gap-1.5" style={{ color: "rgba(212,240,227,0.5)" }}>
+            <Sparkles size={12} style={{ color: "#048740" }} />
             Tri automatique des emails
           </p>
         </div>
@@ -40,32 +46,51 @@ function TopBar({ onNotificationClick, pendingCount }: { onNotificationClick: ()
       <div className="flex items-center gap-3">
         {/* Search */}
         <div className="relative hidden lg:block">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(212,240,227,0.35)" }} />
           <input
             type="text"
             placeholder="Rechercher..."
-            className="pl-9 pr-4 py-2 bg-[#F7F8FA] rounded-lg text-[12px] w-[220px] border border-transparent focus:border-[#449850]/20 focus:bg-white transition-all outline-none"
+            className="pl-9 pr-4 py-2 rounded-lg text-[12px] w-[220px] outline-none transition-all"
+            style={{
+              background: "rgba(0, 56, 51, 0.50)",
+              border: "1px solid rgba(212, 240, 227, 0.08)",
+              color: "#F0FFF8",
+            }}
           />
         </div>
 
         {/* Date */}
-        <div className="flex items-center gap-2 bg-[#F7F8FA] rounded-lg px-3 py-2 text-[12px] text-[#6B7280]">
+        <div
+          className="flex items-center gap-2 rounded-lg px-3 py-2 text-[12px]"
+          style={{
+            background: "rgba(0, 56, 51, 0.40)",
+            border: "1px solid rgba(212, 240, 227, 0.06)",
+            color: "rgba(212,240,227,0.60)",
+          }}
+        >
           <Calendar size={14} />
-          <span>11 mars 2026</span>
+          <span>12 mars 2026</span>
         </div>
 
         {/* Notifications */}
-        <button 
+        <button
           onClick={onNotificationClick}
-          className="relative w-9 h-9 rounded-lg bg-[#F7F8FA] flex items-center justify-center text-[#6B7280] hover:text-[#1B1B2F] hover:bg-[#ECEDF1] transition-colors"
+          className="relative w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+          style={{
+            background: "rgba(0, 56, 51, 0.40)",
+            border: "1px solid rgba(212, 240, 227, 0.06)",
+            color: "rgba(212,240,227,0.60)",
+          }}
         >
           <Bell size={16} />
           {pendingCount > 0 && (
             <>
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#449850] text-white text-[9px] rounded-full flex items-center justify-center animate-pulse" style={{ fontWeight: 700 }}>
+              <span
+                className="absolute -top-0.5 -right-0.5 w-4 h-4 text-white text-[9px] rounded-full flex items-center justify-center"
+                style={{ background: "#048740", fontWeight: 700, animation: "bioluminescent-pulse 2s infinite" }}
+              >
                 {pendingCount}
               </span>
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#449850] rounded-full animate-ping opacity-75" />
             </>
           )}
         </button>
@@ -83,10 +108,7 @@ interface EmailViewProps {
 function DashboardView({ emails, onValidate, onCorrect }: EmailViewProps) {
   return (
     <div className="space-y-5">
-      {/* KPIs */}
       <KpiCards />
-
-      {/* Charts Row */}
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-5">
         <div className="xl:col-span-3">
           <EmailVolumeChart />
@@ -95,8 +117,6 @@ function DashboardView({ emails, onValidate, onCorrect }: EmailViewProps) {
           <ClassificationChart />
         </div>
       </div>
-
-      {/* Bottom Row */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
         <div className="xl:col-span-2">
           <RecentEmails emails={emails} onValidate={onValidate} onCorrect={onCorrect} />
@@ -164,7 +184,7 @@ function SettingsView() {
 
 export default function App() {
   const [activeView, setActiveView] = useState("dashboard");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [emails, setEmails] = useState<EmailItem[]>(initialEmails);
   const [notificationPanelOpen, setNotificationPanelOpen] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<EmailItem | null>(null);
@@ -213,7 +233,16 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="min-h-screen" style={{ background: "#001A19" }}>
+      {/* Background mesh gradient */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 80% 50% at 20% 20%, rgba(4,135,64,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,73,71,0.08) 0%, transparent 60%)",
+          zIndex: 0,
+        }}
+      />
+
       <SidebarNav
         activeView={activeView}
         onViewChange={setActiveView}
@@ -224,8 +253,8 @@ export default function App() {
       />
 
       <div
-        className="transition-all duration-300"
-        style={{ marginLeft: sidebarCollapsed ? 72 : 260 }}
+        className="transition-all duration-300 relative"
+        style={{ marginLeft: sidebarCollapsed ? 64 : 240, zIndex: 1 }}
       >
         <TopBar
           onNotificationClick={() => setNotificationPanelOpen(!notificationPanelOpen)}
